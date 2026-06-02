@@ -4,6 +4,8 @@ from tkinter import ttk
 
 from impact_model import calculate_impacts
 
+BAR_COLORS = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099"]
+
 
 class OilImpactApp(tk.Tk):
     def __init__(self) -> None:
@@ -101,8 +103,6 @@ class OilImpactApp(tk.Tk):
 
         self.canvas.create_line(chart_left, chart_top + chart_height, chart_left + chart_width, chart_top + chart_height)
 
-        colors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099"]
-
         for i, (label, value) in enumerate(zip(labels, values, strict=True)):
             x0 = chart_left + (i * bar_space) + (bar_space - bar_width) / 2
             x1 = x0 + bar_width
@@ -110,7 +110,7 @@ class OilImpactApp(tk.Tk):
             y0 = chart_top + chart_height - bar_h
             y1 = chart_top + chart_height
 
-            self.canvas.create_rectangle(x0, y0, x1, y1, fill=colors[i], outline="")
+            self.canvas.create_rectangle(x0, y0, x1, y1, fill=BAR_COLORS[i], outline="")
             self.canvas.create_text((x0 + x1) / 2, y0 - 10, text=f"${value:.1f}")
             self.canvas.create_text((x0 + x1) / 2, y1 + 15, text=label, width=120)
 
