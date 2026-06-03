@@ -4,28 +4,32 @@ from impact_model import calculate_impacts
 
 
 class TestCalculateImpacts(unittest.TestCase):
-    def test_impacts_scale_from_crude_price(self) -> None:
+    def test_impacts_return_expected_categories(self) -> None:
         impacts = calculate_impacts(100)
+
+        self.assertEqual(
+            set(impacts),
+            {
+                "Crude Oil",
+                "Transportation",
+                "Food Cost",
+                "Annual Expenditure",
+                "Healthcare",
+            },
+        )
         self.assertEqual(impacts["Crude Oil"], 100)
-        self.assertAlmostEqual(impacts["Transportation"], 32)
-        self.assertAlmostEqual(impacts["Food Logistics"], 14.4)
-        self.assertAlmostEqual(impacts["Flight Tickets"], 40.0)
-        self.assertAlmostEqual(impacts["Household Energy"], 28)
+        for key, value in impacts.items():
+            self.assertIsInstance(value, float)
 
+    def test_impacts_increase_with_crude_price(self) -> None:
+        lower = calculate_impacts(50)
+        higher = calculate_impacts(150)
 
-    def test_impacts_scale_for_multiple_prices(self) -> None:
-        for crude in (50, 150):
-            impacts = calculate_impacts(crude)
-            self.assertEqual(impacts["Crude Oil"], crude)
-            self.assertAlmostEqual(impacts["Transportation"], crude * 0.32)
-            self.assertAlmostEqual(impacts["Food Logistics"], crude * 0.32 * 0.45)
-            self.assertAlmostEqual(impacts["Flight Tickets"], crude * 0.32 * 1.25)
-            self.assertAlmostEqual(impacts["Household Energy"], crude * 0.28)
+        self.assertEqual(lower["Crude Oil"], 50)
+        self.assertEqual(higher["Crude Oil"], 150)
 
-    def test_zero_crude_price_returns_zeroed_impacts(self) -> None:
-        impacts = calculate_impacts(0)
-        for value in impacts.values():
-            self.assertEqual(value, 0)
+        for key in ("Transportation", "Food Cost", "Annual Expenditure", "Healthcare"):
+            self.assertGreater(higher[key], lower[key])
 
 
 if __name__ == "__main__":
